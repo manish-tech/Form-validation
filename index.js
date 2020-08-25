@@ -26,7 +26,7 @@ function validate(event){
        }
    }
    else if(name === "email"){
-        let regex = /\w+[@][a-z]+[.][a-z]+/i;
+        let regex = /(\w+)[@]([a-z]+)[.]([a-z]+)/i;
         if(regex.test(element.value)){
             countValids++;
             isValid =true;
@@ -113,7 +113,7 @@ function result(value,message){
 form.addEventListener("submit",(event)=>{
     event.preventDefault();
     console.log("submited");
-    if(countValids===5){
+    if(countValids>=5){
         result("success","Your travel request has been successfully submited");
     }else{
         result("danger","Please fill the from completely")
