@@ -1,7 +1,7 @@
 let list = document.getElementById("taravelInfo").children;
 const form = document.getElementById("taravelInfo");
 let ids = {};
-let countValids = 0;
+let results = {};
 const invalid = {
     "name":"start with alphabets,Enter your valid name.",
     "email":"invalid email ",
@@ -22,13 +22,13 @@ function validate(event){
        let regex = /^[a-z]{1,2}\w+(\s+?\w+){0,10}/i;
        if(regex.test(element.value)){
             isValid =true;
-            countValids++;
+            
        }
    }
    else if(name === "email"){
         let regex = /(\w+)[@]([a-z]+)[.]([a-z]+)/i;
         if(regex.test(element.value)){
-            countValids++;
+          
             isValid =true;
         }
    }
@@ -36,27 +36,31 @@ function validate(event){
    else if(name === "number"){
        let regex = /\b\d{10}\b/;
        if(regex.test(event.target.value)){
-            countValids++;
+            
             isValid =true;
         }
    }
    else if(name ==="cars"){
-        countValids++;
+        
         isValid =true;
    }
 
    else if(name === "address"){
        let regex = /\w+(\s+?\w+?){0,20}/i;
        if(regex.test(element.value)){
-            countValids++;
+            
             isValid =true;
         } 
    }
    else if(name === "message"){
        let regex = /\w+(\s+?\w+?){0,20}/i;
        if(regex.test(element.value)){
-         isValid = true;
+        ids = {
+            ...ids,
+            [name]:name
+        }
          element.classList.add("is-valid");
+         return;
        }
        else{
         element.classList.remove("is-valid");
@@ -68,12 +72,21 @@ function validate(event){
             ...ids,
             [name]:name
         }
+
+        results = {
+            ...results,
+            [name]:true
+        }
         element.classList.remove("is-invalid");
         element.classList.add("is-valid");
         let feedback = document.getElementById("f"+name);
         feedback.classList.replace("invalid-feedback","valid-feedback");
         feedback.innerText = "looks good..";
    }else{
+        results = {
+            ...results,
+            [name]:false
+        }
         element.classList.add("is-invalid");
         let feedback = document.getElementById("f"+name);
         feedback.classList.replace("valid-feedback","invalid-feedback");
@@ -98,7 +111,8 @@ function result(value,message){
         },0)
         form.reset();
         ids = {};
-        countValids = 0;
+        results = {};
+        
     }else{
         document.querySelector(".container").insertAdjacentHTML("beforebegin",html);
     }
@@ -111,12 +125,26 @@ function result(value,message){
 }
 
 form.addEventListener("submit",(event)=>{
+    
     event.preventDefault();
-    console.log("submited");
-    if(countValids>=5){
+    let arr = Object.values(results);
+    if(check(arr)){
         result("success","Your travel request has been successfully submited");
     }else{
         result("danger","Please fill the from completely")
     }
     document.documentElement.scrollTop = 0;     
 });
+
+function check(arr){
+
+    if(arr.length < 5 ){
+        return false;
+    }
+    for(value in arr){
+        if(value===false){
+            return false;
+        }
+    }
+    return true;
+}
