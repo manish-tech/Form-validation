@@ -1,6 +1,11 @@
 let list = document.getElementById("taravelInfo").children;
 const form = document.getElementById("taravelInfo");
-let ids = {};
+const NO_OF_COMPULSORY_INFO = 5;
+const NO_OF_NON_COMPULSORY_INFO = 1;
+
+let compulsoryInfo = {};
+let notcompulsoryInfo = {};
+
 const invalid = {
     "name":"start with alphabets,Enter your valid name.",
     "email":"invalid email ",
@@ -50,8 +55,8 @@ function validate(event){
    else if(name === "message"){
        let regex = /\w+(\s+?\w+?){0,20}/i;
        if(regex.test(element.value)){
-        ids = {
-            ...ids,
+        notcompulsoryInfo = {
+            ...notcompulsoryInfo,
             [name]:name
         }
         element.classList.add("is-valid");
@@ -63,8 +68,8 @@ function validate(event){
        }
     }
    if(isValid){
-        ids = {
-            ...ids,
+        compulsoryInfo = {
+            ...compulsoryInfo,
             [name]:name
         }
 
@@ -75,8 +80,7 @@ function validate(event){
         feedback.innerText = "looks good..";
    }else{
 
-        delete ids[name];
-        console.log({ids});
+        delete compulsoryInfo[name];
         element.classList.add("is-invalid");
         let feedback = document.getElementById("f"+name);
         feedback.classList.replace("valid-feedback","invalid-feedback");
@@ -93,14 +97,15 @@ function result(value,message){
 </div>`
     if(value==="success"){
         document.querySelector(".container").insertAdjacentHTML("beforebegin",html);
-        let arr = Object.values(ids);
+        let arr = Object.values(compulsoryInfo);
         setTimeout(()=>{
             arr.forEach((value)=>{
                 document.getElementById(value).classList.remove("is-valid");
             })
         },0)
         form.reset();
-        ids = {};    
+        compulsoryInfo = {}; 
+        notcompulsoryInfo = {};   
     }else{
         document.querySelector(".container").insertAdjacentHTML("beforebegin",html);
     }
@@ -115,7 +120,7 @@ function result(value,message){
 form.addEventListener("submit",(event)=>{
     
     event.preventDefault();
-    let arr = Object.values(ids);
+    let arr = Object.values(compulsoryInfo);
     if(check(arr)){
         result("success","Your travel request has been successfully submited");
     }else{
@@ -127,7 +132,7 @@ form.addEventListener("submit",(event)=>{
 function check(arr){
     
     console.log(arr);
-    if(arr.length < 6){
+    if(arr.length != NO_OF_COMPULSORY_INFO){
         return false;
     }
     return true;
